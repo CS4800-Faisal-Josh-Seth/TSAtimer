@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Timer</title>
+  <script type="text/javascript">
+        var elapsedSeconds = 0;
+        var elapsedMilliseconds = 0;
+        var intervalId = null;
+        var times = [];
+        var totalTime = 0;
+        var count = 0;
+
+        function startTimer() {
+            clearInterval(intervalId);
+            elapsedSeconds = 0;
+            elapsedMilliseconds = 0;
+            intervalId = setInterval(updateTimer, 10);
+            document.getElementById("startButton").disabled = true;
+            document.getElementById("stopButton").disabled = false;
+        }
+
+        function stopTimer() {
+            clearInterval(intervalId);
+            times.unshift(elapsedSeconds + elapsedMilliseconds/1000);
+            times = times.slice(0, 5);
+            document.getElementById("startButton").disabled = false;
+            document.getElementById("stopButton").disabled = true;
+            totalTime += elapsedSeconds + elapsedMilliseconds/1000;
+            count ++;
+            updateMean();
+            updateTimes();
+        }
+
+        function updateTimer() {
+            elapsedMilliseconds += 10;
+            if (elapsedMilliseconds == 1000) {
+                elapsedSeconds++;
+                elapsedMilliseconds = 0;
+            }
+            document.getElementById("timer").innerHTML = elapsedSeconds + "." + elapsedMilliseconds.toString().padStart(3, "0");
+        }
+
+        function updateMean() {
+            var mean = totalTime/count;
+            document.getElementById("mean").innerHTML = mean.toFixed(3);
+        }
+
+        function updateTimes() {
+            var timesList = document.getElementById("timesList");
+            timesList.innerHTML = "";
+            for (var i = 0; i < times.length; i++) {
+                var listItem = document.createElement("li");
+                listItem.appendChild(document.createTextNode(times[i].toFixed(3)));
+                timesList.appendChild(listItem);
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Timer</h1>
+<p>Press start to begin timing, and stop to record the elapsed time.</p>
+<button type="button" onclick="startTimer()" id="startButton">Start</button>
+<button type="button" onclick="stopTimer()" id="stopButton" disabled>Stop</button>
+<p>Elapsed time: <span id="timer" th:text="${elapsedTime}">0.000</span> seconds</p>
+<p>Mean time: <span id="mean">0.000</span> seconds</p>
+<p>Recent times:</p>
+<ul id="timesList"></ul>
+</body>
+</html>
