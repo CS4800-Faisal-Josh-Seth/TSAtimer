@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Timer</title>
+  <title>TSA Timer</title>
   <script type="text/javascript">
         var elapsedSeconds = 0;
         var elapsedMilliseconds = 0;
@@ -58,13 +58,40 @@
     </script>
 </head>
 <body>
-<h1>Timer</h1>
+<h1>TSA Timer</h1>
+<p>Thank you for contributing to our TSA timer, please be respectful to other users</p>
 <p>Press start to begin timing, and stop to record the elapsed time.</p>
 <button type="button" onclick="startTimer()" id="startButton">Start</button>
 <button type="button" onclick="stopTimer()" id="stopButton" disabled>Stop</button>
-<p>Elapsed time: <span id="timer" th:text="${elapsedTime}">0.000</span> seconds</p>
+<p>Your time: <span id="timer" th:text="${elapsedTime}">0.000</span> seconds</p>
 <p>Mean time: <span id="mean">0.000</span> seconds</p>
 <p>Recent times:</p>
 <ul id="timesList"></ul>
 </body>
 </html>
+
+
+<!--
+original code that uses whats in controller
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Timer</title>
+</head>
+<body>
+<h1>Timer</h1>
+<p>Press start to begin timing, and stop to record the elapsed time.</p>
+<form method="post" th:action="@{/start}">
+  <button type="submit">Start</button>
+</form>
+<form method="post" th:action="@{/stop}">
+  <button type="submit">Stop</button>
+</form>
+<p th:text="${meanTime}"></p>
+</body>
+</html>
+
+
+-->
