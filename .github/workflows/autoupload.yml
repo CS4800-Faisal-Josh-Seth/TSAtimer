@@ -37,7 +37,7 @@ jobs:
         username: ec2-user
         port: 22
         key: ${{ secrets.KEY }}
-        source: "target/TSA-New.jar"
+        source: "backend/target/TSA-New.jar"
         target: "~/"
 
     - name: Run commands to start the Java server
