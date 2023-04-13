@@ -72,10 +72,7 @@ public class TsaBackendController {
     }
 
 
-    @RequestMapping("/goodbye")
-    public String goodbye() {
-        return "Goodbye from Bouldering Baddies";
-    }
+    
 
     @RequestMapping("/seth")
     public String seth() {
