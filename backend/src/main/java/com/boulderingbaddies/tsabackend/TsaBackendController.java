@@ -1,12 +1,15 @@
 package com.boulderingbaddies.tsabackend;
 
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Controller
 public class TsaBackendController {
@@ -18,17 +21,27 @@ public class TsaBackendController {
 
     @GetMapping("/")
     public String index(Model model) {
-        model.addAttribute("meanTime", getMeanTime());
-        model.addAttribute("mostRecent", getRecentTime());
-        model.addAttribute("elapsedTime", elapsedTime);
+        //model.addAttribute("meanTime", getMeanTime());
+        //model.addAttribute("mostRecent", getRecentTime());
+        //model.addAttribute("elapsedTime", elapsedTime);
 
-        return "timer";
+        return "index";
     }
 
     @PostMapping("/start")
     public String startTimer() {
         startTime = System.currentTimeMillis();
         return "redirect:/";
+    }
+
+    @Configuration
+    public class WebConfig implements WebMvcConfigurer {
+
+        @Override
+        public void addResourceHandlers(ResourceHandlerRegistry registry) {
+            registry.addResourceHandler("/static/**")
+                    .addResourceLocations("classpath:/static/");
+        }
     }
 
     @PostMapping("/stop")
