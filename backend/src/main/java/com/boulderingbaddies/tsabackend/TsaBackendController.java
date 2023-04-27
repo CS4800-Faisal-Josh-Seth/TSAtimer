@@ -24,7 +24,7 @@ public class TsaBackendController {
         //model.addAttribute("mostRecent", getRecentTime());
         //model.addAttribute("elapsedTime", elapsedTime);
 
-        return "index";
+        return "terminal";
     }
 
     @PostMapping("/start")
