@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Site</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <!-- Add comments to describe the purpose of each section -->
+</head>
+<body>
+<header>
+  <div class="logo-container">
+    <img src="BBlogo.png" alt="Logo" class="logo">
+  </div>
+  <nav class="navbar">
+    <ul class="nav-list">
+      <li class="nav-item"><a href="#section1">Learn More</a></li>
+      <li class="nav-item"><a href="#section2">About Us</a></li>
+      <li class="nav-item"><a href="#section3">Search</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <div class="hero-image" style="background-image: url('transparentRunway.png');">
+    <div class="hero-text">
+      <h1 class="title"><b>TSA TIMER</b></h1>
+      <p class="subtext">Never show up early because of TSA again...</p>
+      <select id="airport-select">
+        <option value="">Select an available airport</option>
+      </select>
+    </div>
+  </div>
+  </div>
+  <section id="section1">
+    <h2 class="section-title">Learn More</h2>
+    <p>Welcome to our TSA Timer web application! We're proud to offer you a comprehensive solution to all your airport security checkpoint timing needs. Our application uses a wide variety of technologies, including MySQL, Java Springboot, Java, JavaScript, HTML, CSS, and SQL as our database to bring you the best possible experience.</p>
+
+    <h3>How It Works</h3>
+    <p>At its core, our application is designed to give you accurate wait times for various TSA checkpoints at airports all over the world. Our system works by collecting data from users who enter their wait times when they enter and exit a security checkpoint. We then use this data to calculate an average wait time, which is displayed to other users who are searching for the same information.</p>
+
+    <h3>How To Use It</h3>
+    <ol>
+      <li>Select the airport you're interested in from the dropdown menu.</li>
+      <li>Enter the date and time of your flight.</li>
+      <li>Select the TSA checkpoint you'll be using.</li>
+      <li>Our system will display the average wait time for that checkpoint, based on data from other users.</li>
+      <li>Use this information to plan your arrival time at the airport.</li>
+    </ol>
+
+    <h3>Why Use It</h3>
+    <p>We're proud to offer you the most accurate, up-to-date information about TSA checkpoint wait times available anywhere. Whether you're a seasoned traveler or someone who's just getting started, we're confident that our application will make your airport experience smoother, faster, and more efficient than ever before.</p>
+    <h2 class="section-title">About Us</h2>
+    <p>Bouldering Baddies is a team of developers who are passionate about travel and technology. We created the TSA Timer web application to help travelers save time and reduce stress at the airport.</p>
+
+    <h3>Our Mission</h3>
+    <p>Our mission is to provide travelers with the most accurate, up-to-date information about TSA checkpoint wait times, so they can make informed decisions about when to arrive at the airport. We believe that by using our application, travelers can reduce the amount of time they spend waiting in line, and spend more time enjoying their trip.</p>
+
+    <h3>Our Team</h3>
+    <p>Our team is made up of experienced developers who have worked on a variety of projects in the travel and technology industries. We're dedicated to creating innovative solutions that make travel easier, faster, and more enjoyable for everyone.</p>
+
+    <h3>Contact Us</h3>
+    <p>If you have any questions or feedback about our application, please definitely let us know! You can reach us at contact@boulderingbaddies.com, or connect with us on social media:</p>
+
+    <ul>
+      <li><a href="https://twitter.com/boulderingbaddi">Twitter</a></li>
+      <li><a href="https://www.facebook.com/boulderingbaddies">Facebook</a></li>
+      <li><a href="https://www.instagram.com/boulderingbaddies/">Instagram</a></li>
+    </ul>
+  </section>
+</main>
+<footer>
+  <p>&copy;  2023 Bouldering Baddies</p>
+</footer>
+<script src="script.js"></script>
+</body>
+
+<script>
+  const toggleBtn = document.getElementById('toggle-btn');
+  const section1 = document.getElementById('section1');
+  const sectionContent = section1.querySelector('p');
+
+  toggleBtn.addEventListener('click', function() {
+    if (sectionContent.style.display === 'none') {
+      sectionContent.style.display = 'block';
+    } else {
+      sectionContent.style.display = 'none';
+    }
+  });
+</script>
+
+<head>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/script.js"></script>
+  <img src ="/static/BBlogo.png">
+  <img src ="/static/transparentRunway.png">
+</head>
+
+</html>

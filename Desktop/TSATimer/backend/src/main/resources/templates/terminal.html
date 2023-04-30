@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="/static/terminal.css">
+  <title>Terminal</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+<h1>Terminal Details</h1>
+<table>
+  <thead>
+  <tr>
+    <th>Terminal Code</th>
+    <th>Terminal Name</th>
+  </tr>
+  </thead>
+  <tbody id="terminalTableBody">
+  </tbody>
+</table>
+<br>
+<button id="startButton">Start</button>
+<button id="stopButton">Stop</button>
+<br>
+<br>
+<p id="elapsedTime"></p>
+<script>
+    // Get the terminal code from the query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const terminalCode = urlParams.get('code');
+
+    // Get the terminal details from the server
+    fetch(`http://localhost:8080/terminal/${terminalCode}`)
+        .then(response => response.json())
+        .then(data => {
+            const terminalTableBody = document.getElementById('terminalTableBody');
+            const row = terminalTableBody.insertRow();
+            row.insertCell().innerHTML = data.code;
+            row.insertCell().innerHTML = data.name;
+        })
+        .catch(error => console.log(error));
+
+    // Add event listeners to the start and stop buttons
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    let startTime;
+    let endTime;
+
+    startButton.addEventListener('click', () => {
+        startTime = Date.now();
+        console.log('Start time:', startTime);
+        document.getElementById('elapsedTime').innerHTML = 'Time started';
+    });
+
+    stopButton.addEventListener('click', () => {
+        endTime = Date.now();
+        const elapsedTime = (endTime - startTime) / 1000;
+        console.log('Elapsed time:', elapsedTime);
+        document.getElementById('elapsedTime').innerHTML = `Elapsed time: ${elapsedTime} seconds`;
+
+        const data = {
+            elapsedTime: elapsedTime,
+            createdAt: new Date().toISOString(),
+            terminal: terminalCode
+        };
+
+        fetch('http://localhost:8080/create/waittime', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.log(error));
+    });
+</script>
+</body>
+</html>

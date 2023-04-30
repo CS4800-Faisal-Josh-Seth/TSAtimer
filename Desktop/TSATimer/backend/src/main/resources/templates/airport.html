@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Airport Wait Times</title>
+</head>
+<body>
+<h1>Wait Times at [AIRPORT NAME]</h1>
+<table>
+  <thead>
+  <tr>
+    <th>Terminal</th>
+    <th>Wait Time</th>
+    <th>View Terminal</th>
+  </tr>
+  </thead>
+  <tbody id="wait-times-body">
+  </tbody>
+</table>
+
+<script>
+    const airportCode = "[AIRPORT CODE]";
+    const apiUrl = `http://localhost:8080/api/terminals?code=${airportCode}`;
+
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        const terminals = data._embedded.terminals;
+        const waitTimesBody = document.getElementById("wait-times-body");
+
+        terminals.forEach(terminal => {
+          const row = document.createElement("tr");
+          const terminalCell = document.createElement("td");
+          const waitTimeCell = document.createElement("td");
+          const viewTerminalCell = document.createElement("td");
+          const viewTerminalButton = document.createElement("button");
+
+          terminalCell.textContent = terminal.terminalCode;
+          waitTimeCell.textContent = `${terminal.waitTime} minutes`;
+          viewTerminalButton.textContent = "View";
+
+          viewTerminalButton.addEventListener("click", () => {
+            // Redirect the user to the terminal page with the selected terminal code as a query parameter
+            window.location.href = `terminal.html?code=${terminal.terminalCode}`;
+          });
+
+          viewTerminalCell.appendChild(viewTerminalButton);
+
+          row.appendChild(terminalCell);
+          row.appendChild(waitTimeCell);
+          row.appendChild(viewTerminalCell);
+          waitTimesBody.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error("Error fetching data:", error);
+      });
+  </script>
+</body>
+</html>
