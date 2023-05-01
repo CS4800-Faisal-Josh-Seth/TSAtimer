@@ -3,14 +3,14 @@ let data;
 function populateDropdown() {
   const dropdown = document.querySelector('#airport-select');
 
-  fetch('http://ec2-18-119-130-187.us-east-2.compute.amazonaws.com:8080/terminals')
+  fetch('airports.json')
     .then(response => response.json())
-    .then(data => {
-      this.data = data;
-      data._embedded.terminals.forEach(terminal => {
+    .then(jsonData => {
+      data = jsonData;
+      data.airports.forEach(airport => {
         const option = document.createElement('option');
-        option.value = terminal.airportCode;
-        option.text = `${terminal.airportCode} - ${terminal.terminalCode}`;
+        option.value = airport.code;
+        option.text = `${airport.name}`;
         dropdown.appendChild(option);
       });
     })
@@ -18,9 +18,8 @@ function populateDropdown() {
 
   dropdown.addEventListener('change', (event) => {
     const selectedOption = event.target.value;
-    const selectedTerminals = this.data._embedded.terminals.filter(terminal => terminal.airportCode === selectedOption);
-    const selectedAirport = selectedTerminals[0].airportCode;
-    window.location.href = `airport.html?code=${selectedAirport}&terminals=${selectedTerminals.length}`;
+    const selectedAirport = data.airports.find(airport => airport.code === selectedOption);
+    window.location.href = `airport.html?code=${selectedAirport.code}&terminals=${selectedAirport.terminals}`;
   });
 }
 

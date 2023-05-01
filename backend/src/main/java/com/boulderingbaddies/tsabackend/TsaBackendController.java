@@ -2,6 +2,7 @@ package com.boulderingbaddies.tsabackend;
 
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class TsaBackendController {
         //model.addAttribute("mostRecent", getRecentTime());
         //model.addAttribute("elapsedTime", elapsedTime);
 
-        return "terminal";
+        return "index";
     }
 
     @PostMapping("/start")
@@ -83,7 +84,16 @@ public class TsaBackendController {
 
     }
 
+    @GetMapping("/airport/{airportCode}")
+    public String navigateToAirportPage(@PathVariable String airportCode, Model model) {
+        model.addAttribute("airportCode", airportCode);
+        return "airport";
+    }
 
+    @GetMapping("/terminal/{airportCode}/{terminalNumber}")
+    public String showTerminalPage(@PathVariable String airportCode, @PathVariable String terminalNumber) {
+        return "terminal"; // assuming "terminal.html" is the name of your terminal HTML page
+    }
 
 
     @RequestMapping("/seth")
