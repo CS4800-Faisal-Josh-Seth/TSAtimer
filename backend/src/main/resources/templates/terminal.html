@@ -193,7 +193,7 @@ const inputTimeInMinutes = parseInt(inputValue) * 60; //minutes
   const futureTime = new Date(Date.now() + (60 * 60 * 1000 * inputValue));
   const futureTimeMs = futureTime.getTime();  //milliseconds
 
-  fetch(`http://ec2-18-119-130-187.us-east-2.compute.amazonaws.com:8080/create/waittime`)
+  fetch(`http://ec2-18-119-130-187.us-east-2.compute.amazonaws.com:8080/waittimes`)
     .then(response => response.json())
     .then(data => {
       const waitTimesForTerminal = data._embedded.wait_times.filter(waitTime => waitTime.terminal === terminalCode && waitTime.createdAt > generalTime);
