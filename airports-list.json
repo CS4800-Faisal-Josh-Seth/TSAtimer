@@ -1,0 +1,49 @@
+{
+  "airports": [
+    {
+      "code": "LAX",
+      "name": "Los Angeles International Airport",
+      "terminals": 9
+    },
+    {
+      "code": "JFK",
+      "name": "John F. Kennedy International Airport",
+      "terminals": 6
+    },
+    {
+      "code": "SFO",
+      "name": "San Francisco International Airport",
+      "terminals": 4
+    },
+    {
+      "code": "ORD",
+      "name": "Chicago O'Hare International Airport",
+      "terminals": 4
+    },
+    {
+      "code": "ATL",
+      "name": "Hartsfield–Jackson Atlanta International Airport",
+      "terminals": 7
+    },
+    {
+      "code": "DFW",
+      "name": "Dallas/Fort Worth International Airport",
+      "terminals": 5
+    },
+    {
+      "code": "LGA",
+      "name": "LaGuardia Airport",
+      "terminals": 4
+    },
+    {
+      "code": "LAS",
+      "name": "McCarran International Airport",
+      "terminals": 2
+    },
+    {
+      "code": "MIA",
+      "name": "Miami International Airport",
+      "terminals": 8
+    }
+  ]
+}

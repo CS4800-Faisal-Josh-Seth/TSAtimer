@@ -91,7 +91,7 @@ public class TsaBackendAPIController {
         try {
 
             // Parse the airports from the JSON file
-            Object obj = parser.parse(new FileReader("backend/src/main/resources/static/airports.json"));
+            Object obj = parser.parse(new FileReader("airports-list.json"));
             JSONObject jsonObject = (JSONObject) obj;
 
             // Find the airport in the JSON file that matches the code from the POST req
