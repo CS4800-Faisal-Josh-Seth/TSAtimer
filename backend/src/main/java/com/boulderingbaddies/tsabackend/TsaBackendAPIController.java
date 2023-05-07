@@ -1,6 +1,13 @@
 package com.boulderingbaddies.tsabackend;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import jakarta.transaction.Transactional;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
@@ -8,7 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -90,73 +100,62 @@ public class TsaBackendAPIController {
         ArrayList<WaitTime> waitTimes = new ArrayList<>();
         try {
 
-            // Parse the airports from the JSON file
-            Object obj = parser.parse(new FileReader("airports-list.json"));
-            JSONObject jsonObject = (JSONObject) obj;
+            ArrayList<Airport> airports = getAirports();
+            int numTerminals = 0;
+            for (Airport currentAirport: airports) {
+                if (currentAirport.getCode().equalsIgnoreCase(airport)) {
+                    numTerminals = currentAirport.getTerminals();
+                    break;
+                }
+            }
 
-            WaitTime stub = new WaitTime(0.69, "fuck-you", "piece-of-shit");
-            waitTimes.add(stub);
+            // Terminal has the format airportCode-Terminal#
+            // Ex: JFK-1
+            // Generate 3 estimated wait times for each terminal
+            for (int i = 0; i < numTerminals; i++) {
 
-//            // Find the airport in the JSON file that matches the code from the POST req
-//            JSONArray airports =  (JSONArray) jsonObject.get("airports");
-//            Iterator<JSONObject> iterator = airports.iterator();
-//            long numTerminals = 0;
-//            while (iterator.hasNext()) {
-//                JSONObject parsedAirport = (JSONObject) iterator.next();
-//                String airportCode = (String)parsedAirport.get("code");
-//                if (airportCode.equalsIgnoreCase(airport)) {
-//                    numTerminals = (long)parsedAirport.get("terminals");
-//                    break;
-//                }
-//            }
-//
-//            // Terminal has the format airportCode-Terminal#
-//            // Ex: JFK-1
-//            // Generate 3 estimated wait times for each terminal
-//            for (int i = 0; i < numTerminals; i++) {
-//
-//                // Generate AirportCode-Terminal#
-//                int terminalNumber = i + 1;
-//                String airportCode = airport +  "-" + terminalNumber;
-//
-//                // Generate 3 data points
-//                // Requirements:
-//                // 1) Generated 2 days ago
-//                // 2) Spaced out 6 hours from each other
-//                // 3) Wait time ranging from 30 min - 3 hours (converted to seconds)
-//
-//                // Get the date from 2 days ago
-//                SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-//                f.setTimeZone(TimeZone.getTimeZone("UTC"));
-//                Calendar cal = Calendar.getInstance();
-//                cal.add(Calendar.DATE, -2);
-//
-//                // Generate 3 createdAt times
-//                String firstCreatedAt = f.format(cal.getTime());
-//                cal.add(Calendar.HOUR, 6);
-//                String secondCreatedAt = f.format(cal.getTime());
-//                cal.add(Calendar.HOUR, 6);
-//                String thirdCreatedAt = f.format(cal.getTime());
-//
-//                // Generate 3 elapsed times
-//                // Anywhere between 1800 and 10800 seconds
-//                Random r = new Random();
-//                int low = 1800;
-//                int high = 110800;
-//
-//                int firstElapsedTime = r.nextInt(high-low) + low;
-//                int secondElapsedTime = r.nextInt(high-low) + low;
-//                int thirdElapsedTime = r.nextInt(high-low) + low;
-//
-//                // Generate and save 3 wait times for the terminal
-//                WaitTime firstWaitTime = new WaitTime((double)firstElapsedTime, firstCreatedAt, airportCode);
-//                WaitTime secondWaitTime = new WaitTime((double)secondElapsedTime, secondCreatedAt, airportCode);
-//                WaitTime thirdWaitTime = new WaitTime((double)thirdElapsedTime, thirdCreatedAt, airportCode);
-//
-//                waitTimes.add(firstWaitTime);
-//                waitTimes.add(secondWaitTime);
-//                waitTimes.add(thirdWaitTime);
-//            }
+                // Generate AirportCode-Terminal#
+                int terminalNumber = i + 1;
+                String airportCode = airport +  "-" + terminalNumber;
+
+                // Generate 3 data points
+                // Requirements:
+                // 1) Generated 2 days ago
+                // 2) Spaced out 6 hours from each other
+                // 3) Wait time ranging from 30 min - 3 hours (converted to seconds)
+
+                // Get the date from 2 days ago
+                SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                f.setTimeZone(TimeZone.getTimeZone("UTC"));
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, -2);
+
+                // Generate 3 createdAt times
+                String firstCreatedAt = f.format(cal.getTime());
+                cal.add(Calendar.HOUR, 6);
+                String secondCreatedAt = f.format(cal.getTime());
+                cal.add(Calendar.HOUR, 6);
+                String thirdCreatedAt = f.format(cal.getTime());
+
+                // Generate 3 elapsed times
+                // Anywhere between 1800 and 10800 seconds
+                Random r = new Random();
+                int low = 1800;
+                int high = 110800;
+
+                int firstElapsedTime = r.nextInt(high-low) + low;
+                int secondElapsedTime = r.nextInt(high-low) + low;
+                int thirdElapsedTime = r.nextInt(high-low) + low;
+
+                // Generate and save 3 wait times for the terminal
+                WaitTime firstWaitTime = new WaitTime((double)firstElapsedTime, firstCreatedAt, airportCode);
+                WaitTime secondWaitTime = new WaitTime((double)secondElapsedTime, secondCreatedAt, airportCode);
+                WaitTime thirdWaitTime = new WaitTime((double)thirdElapsedTime, thirdCreatedAt, airportCode);
+
+                waitTimes.add(firstWaitTime);
+                waitTimes.add(secondWaitTime);
+                waitTimes.add(thirdWaitTime);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             WaitTime errWaitTime = new WaitTime(0.0, e.getMessage(), e.getLocalizedMessage());
@@ -172,5 +171,31 @@ public class TsaBackendAPIController {
                 .created(URI
                         .create(String.format("/wait_time/%s", waitTimes.get(0).getCreatedAt())))
                 .body(waitTimes);
+    }
+
+    public ArrayList<Airport> getAirports() throws IOException {
+
+        ArrayList<Airport> airports = new ArrayList<>();
+
+        Request request = new Request.Builder()
+                .url("http://ec2-18-119-130-187.us-east-2.compute.amazonaws.com:8080/airports.json")
+                .build();
+
+        OkHttpClient client = new OkHttpClient();
+        Call call = client.newCall(request);
+        Response response = call.execute();
+
+        String json = response.body().string();
+
+        // convert JSON string to Map
+        Gson gson = new Gson();
+        Airports rootAirports = gson.fromJson(json, Airports.class);
+        List<Airport> airportsList = rootAirports.airports;
+        for (int i = 0; i < airportsList.toArray().length; i++) {
+            Airport current = airportsList.get(i);
+            airports.add(current);
+        }
+
+        return airports;
     }
 }
