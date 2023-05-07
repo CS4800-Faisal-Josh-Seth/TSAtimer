@@ -10,15 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import java.io.FileReader;
-
-import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
 @RestController
 public class TsaBackendAPIController {
@@ -87,9 +84,10 @@ public class TsaBackendAPIController {
     // Created 2 days ago, spaced 12 hours between each other
     // Ex: JFK
     @PostMapping(value = {"/autogen/{airport}"})
-    public void autogenWaitTimes(@PathVariable(required=true,name="airport") String airport) {
+    public ResponseEntity<ArrayList<WaitTime>> autogenWaitTimes(@PathVariable(required=true,name="airport") String airport) {
 
         JSONParser parser = new JSONParser();
+        ArrayList<WaitTime> waitTimes = new ArrayList<>();
         try {
 
             // Parse the airports from the JSON file
@@ -163,9 +161,18 @@ public class TsaBackendAPIController {
                 waitTimeRepository.save(firstWaitTime);
                 waitTimeRepository.save(secondWaitTime);
                 waitTimeRepository.save(thirdWaitTime);
+
+                waitTimes.add(firstWaitTime);
+                waitTimes.add(secondWaitTime);
+                waitTimes.add(thirdWaitTime);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return ResponseEntity
+                .created(URI
+                        .create(String.format("/wait_time/%s", waitTimes.get(0).getCreatedAt())))
+                .body(waitTimes);
     }
 }
