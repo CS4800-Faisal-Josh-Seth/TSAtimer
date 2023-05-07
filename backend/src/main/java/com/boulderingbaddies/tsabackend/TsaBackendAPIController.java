@@ -168,6 +168,12 @@ public class TsaBackendAPIController {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            WaitTime errWaitTime = new WaitTime(0.0, e.getMessage(), e.getLocalizedMessage());
+            waitTimes.add(errWaitTime);
+            return ResponseEntity
+                    .created(URI
+                            .create(String.format("/wait_time/%s", waitTimes.get(0).getCreatedAt())))
+                    .body(waitTimes);
         }
 
         return ResponseEntity
