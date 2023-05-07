@@ -94,66 +94,69 @@ public class TsaBackendAPIController {
             Object obj = parser.parse(new FileReader("airports-list.json"));
             JSONObject jsonObject = (JSONObject) obj;
 
-            // Find the airport in the JSON file that matches the code from the POST req
-            JSONArray airports =  (JSONArray) jsonObject.get("airports");
-            Iterator<JSONObject> iterator = airports.iterator();
-            long numTerminals = 0;
-            while (iterator.hasNext()) {
-                JSONObject parsedAirport = (JSONObject) iterator.next();
-                String airportCode = (String)parsedAirport.get("code");
-                if (airportCode.equalsIgnoreCase(airport)) {
-                    numTerminals = (long)parsedAirport.get("terminals");
-                    break;
-                }
-            }
+            WaitTime stub = new WaitTime(0.69, "fuck-you", "piece-of-shit");
+            waitTimes.add(stub);
 
-            // Terminal has the format airportCode-Terminal#
-            // Ex: JFK-1
-            // Generate 3 estimated wait times for each terminal
-            for (int i = 0; i < numTerminals; i++) {
-
-                // Generate AirportCode-Terminal#
-                int terminalNumber = i + 1;
-                String airportCode = airport +  "-" + terminalNumber;
-
-                // Generate 3 data points
-                // Requirements:
-                // 1) Generated 2 days ago
-                // 2) Spaced out 6 hours from each other
-                // 3) Wait time ranging from 30 min - 3 hours (converted to seconds)
-
-                // Get the date from 2 days ago
-                SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                f.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.DATE, -2);
-
-                // Generate 3 createdAt times
-                String firstCreatedAt = f.format(cal.getTime());
-                cal.add(Calendar.HOUR, 6);
-                String secondCreatedAt = f.format(cal.getTime());
-                cal.add(Calendar.HOUR, 6);
-                String thirdCreatedAt = f.format(cal.getTime());
-
-                // Generate 3 elapsed times
-                // Anywhere between 1800 and 10800 seconds
-                Random r = new Random();
-                int low = 1800;
-                int high = 110800;
-
-                int firstElapsedTime = r.nextInt(high-low) + low;
-                int secondElapsedTime = r.nextInt(high-low) + low;
-                int thirdElapsedTime = r.nextInt(high-low) + low;
-
-                // Generate and save 3 wait times for the terminal
-                WaitTime firstWaitTime = new WaitTime((double)firstElapsedTime, firstCreatedAt, airportCode);
-                WaitTime secondWaitTime = new WaitTime((double)secondElapsedTime, secondCreatedAt, airportCode);
-                WaitTime thirdWaitTime = new WaitTime((double)thirdElapsedTime, thirdCreatedAt, airportCode);
-
-                waitTimes.add(firstWaitTime);
-                waitTimes.add(secondWaitTime);
-                waitTimes.add(thirdWaitTime);
-            }
+//            // Find the airport in the JSON file that matches the code from the POST req
+//            JSONArray airports =  (JSONArray) jsonObject.get("airports");
+//            Iterator<JSONObject> iterator = airports.iterator();
+//            long numTerminals = 0;
+//            while (iterator.hasNext()) {
+//                JSONObject parsedAirport = (JSONObject) iterator.next();
+//                String airportCode = (String)parsedAirport.get("code");
+//                if (airportCode.equalsIgnoreCase(airport)) {
+//                    numTerminals = (long)parsedAirport.get("terminals");
+//                    break;
+//                }
+//            }
+//
+//            // Terminal has the format airportCode-Terminal#
+//            // Ex: JFK-1
+//            // Generate 3 estimated wait times for each terminal
+//            for (int i = 0; i < numTerminals; i++) {
+//
+//                // Generate AirportCode-Terminal#
+//                int terminalNumber = i + 1;
+//                String airportCode = airport +  "-" + terminalNumber;
+//
+//                // Generate 3 data points
+//                // Requirements:
+//                // 1) Generated 2 days ago
+//                // 2) Spaced out 6 hours from each other
+//                // 3) Wait time ranging from 30 min - 3 hours (converted to seconds)
+//
+//                // Get the date from 2 days ago
+//                SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+//                f.setTimeZone(TimeZone.getTimeZone("UTC"));
+//                Calendar cal = Calendar.getInstance();
+//                cal.add(Calendar.DATE, -2);
+//
+//                // Generate 3 createdAt times
+//                String firstCreatedAt = f.format(cal.getTime());
+//                cal.add(Calendar.HOUR, 6);
+//                String secondCreatedAt = f.format(cal.getTime());
+//                cal.add(Calendar.HOUR, 6);
+//                String thirdCreatedAt = f.format(cal.getTime());
+//
+//                // Generate 3 elapsed times
+//                // Anywhere between 1800 and 10800 seconds
+//                Random r = new Random();
+//                int low = 1800;
+//                int high = 110800;
+//
+//                int firstElapsedTime = r.nextInt(high-low) + low;
+//                int secondElapsedTime = r.nextInt(high-low) + low;
+//                int thirdElapsedTime = r.nextInt(high-low) + low;
+//
+//                // Generate and save 3 wait times for the terminal
+//                WaitTime firstWaitTime = new WaitTime((double)firstElapsedTime, firstCreatedAt, airportCode);
+//                WaitTime secondWaitTime = new WaitTime((double)secondElapsedTime, secondCreatedAt, airportCode);
+//                WaitTime thirdWaitTime = new WaitTime((double)thirdElapsedTime, thirdCreatedAt, airportCode);
+//
+//                waitTimes.add(firstWaitTime);
+//                waitTimes.add(secondWaitTime);
+//                waitTimes.add(thirdWaitTime);
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             WaitTime errWaitTime = new WaitTime(0.0, e.getMessage(), e.getLocalizedMessage());
