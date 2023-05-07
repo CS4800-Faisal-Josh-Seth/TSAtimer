@@ -97,12 +97,12 @@ public class TsaBackendAPIController {
             // Find the airport in the JSON file that matches the code from the POST req
             JSONArray airports =  (JSONArray) jsonObject.get("airports");
             Iterator<JSONObject> iterator = airports.iterator();
-            Long numTerminals = Long.valueOf(0);
+            long numTerminals = 0;
             while (iterator.hasNext()) {
                 JSONObject parsedAirport = (JSONObject) iterator.next();
                 String airportCode = (String)parsedAirport.get("code");
                 if (airportCode.equalsIgnoreCase(airport)) {
-                    numTerminals = (Long)parsedAirport.get("terminals");
+                    numTerminals = (long)parsedAirport.get("terminals");
                     break;
                 }
             }
