@@ -122,10 +122,11 @@ input {
     const airportCode = pathParts[pathParts.length - 2];
     const terminalCode = `${airportCode}-${pathParts[pathParts.length - 1]}`;
    const recentTimePeriod = 1 * 1 * 60 * 60 * 1000; // most recent 1 hour in milliseconds
-   const mindatapoints = 7;
+   const mindatapoints = 5;
 
     // Get the terminal details from the server
-    fetch(`http://ec2-18-119-130-187.us-east-2.compute.amazonaws.com:8080/create/waittime`)
+    //fetch(`http://ec2-18-119-130-187.us-east-2.compute.amazonaws.com:8080/create/waittime`)
+    fetch('http://localhost:8080/create/waittime')
         .then(response => response.json())
         .then(data => {
             const terminalTableBody = document.getElementById('terminalTableBody');
@@ -150,6 +151,9 @@ input {
         startTime = Date.now();
         console.log('Start time:', startTime);
         document.getElementById('elapsedTime').innerHTML = 'Time started';
+        fetch('http://localhost:8080/autogen/JFK', {
+          method: 'POST'
+            })
     });
 
     stopButton.addEventListener('click', () => {
@@ -165,7 +169,8 @@ input {
                 terminal: terminalCode
             };
 
-            fetch('http://ec2-18-119-130-187.us-east-2.compute.amazonaws.com:8080/create/waittime', {
+            //fetch('http://ec2-18-119-130-187.us-east-2.compute.amazonaws.com:8080/create/waittime', {
+            fetch('http://localhost:8080/create/waittime', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -181,8 +186,8 @@ input {
 
 predictButton.addEventListener('click', () => {
   // Convert user input from hours to minutes
-const inputValue = inputBox.value; // hours
-const inputTimeInMinutes = parseInt(inputValue) * 60; //minutes
+  const inputValue = inputBox.value; // hours
+  const inputTimeInMinutes = parseInt(inputValue) * 60; //minutes
 
   if (isNaN(inputValue) || parseInt(inputValue) <= 0) {
     alert('Please enter a valid number greater than 0.');
@@ -193,13 +198,14 @@ const inputTimeInMinutes = parseInt(inputValue) * 60; //minutes
   const futureTime = new Date(Date.now() + (60 * 60 * 1000 * inputValue));
   const futureTimeMs = futureTime.getTime();  //milliseconds
 
-  fetch(`http://ec2-18-119-130-187.us-east-2.compute.amazonaws.com:8080/waittimes`)
+  //fetch(`http://ec2-18-119-130-187.us-east-2.compute.amazonaws.com:8080/waittimes`)
+  fetch('http://localhost:8080/waittimes')
     .then(response => response.json())
     .then(data => {
-      const waitTimesForTerminal = data._embedded.wait_times.filter(waitTime => waitTime.terminal === terminalCode && waitTime.createdAt > generalTime);
+      const waitTimesForTerminal = data._embedded.wait_times.filter(waitTime => waitTime.terminal === terminalCode && waitTime.createdAt > generalTime && waitTime.elapsedTime != null);
 
       if (waitTimesForTerminal.length < mindatapoints) {
-        const remainingData = data._embedded.wait_times.filter(waitTime => waitTime.terminal === terminalCode && waitTime.createdAt <= generalTime);
+        const remainingData = data._embedded.wait_times.filter(waitTime => waitTime.terminal === terminalCode && waitTime.createdAt <= generalTime && waitTime.elapsedTime != null);
         for (const waitTime of remainingData) {
           if (waitTimesForTerminal.length >= mindatapoints) break;
           waitTimesForTerminal.push({
@@ -210,60 +216,71 @@ const inputTimeInMinutes = parseInt(inputValue) * 60; //minutes
       }
 
       // Calculate predicted elapsed time in minutes
-const predictedElapsedTime = predictWaitTime(waitTimesForTerminal, futureTimeMs);
-//const predictedElapsedTimeInMinutes = predictedElapsedTime / 60;
+      const predictedElapsedTime = predictWaitTime(waitTimesForTerminal, futureTimeMs);
 
       // Display predicted elapsed time in hours and minutes
-const predictedHours = Math.floor(predictedElapsedTime);
-const predictedMinutes = Math.round(predictedElapsedTime % 1 * 60);
-document.getElementById('dataPoints').innerHTML = `Weighted expected elapsed time for ${inputValue} hours from now: ${predictedHours} hours and ${predictedMinutes} minutes`;
-  })
+      const predictedHours = Math.floor(predictedElapsedTime);
+      const predictedMinutes = Math.round(predictedElapsedTime % 1 * 60);
+      document.getElementById('dataPoints').innerHTML = `Weighted expected elapsed time for ${inputValue} hours from now: ${predictedHours} hours and ${predictedMinutes} minutes`;
+    })
     .catch(error => console.error(error));
 });
 
 
-    function predictWaitTime(waitTimesForTerminal, futureTimeMs) {
+  function predictWaitTime(waitTimesForTerminal, futureTimeMs) {
   const n = waitTimesForTerminal.length;
   if (n === 0) {
     return 69.420;
   }
   if (n === 1) {
-    return waitTimesForTerminal[0].elapsedTime / 3600; // return in hours
+    return 69.420; // return in hours
   }
 
   const x = [];
   const y = [];
-  let sumX = 0;
-  let sumY = 0;
-  let sumXY = 0;
-  let sumXX = 0;
   let minElapsedTime = Number.MAX_VALUE;
   let maxElapsedTime = Number.MIN_VALUE;
 
+  // Calculate average wait time
+  let totalElapsedTimeInSeconds = 0;
   for (let i = 0; i < n; i++) {
     const elapsedTimeInSeconds = waitTimesForTerminal[i].elapsedTime;
+    if (!elapsedTimeInSeconds) {
+      continue;
+    }
+    totalElapsedTimeInSeconds += elapsedTimeInSeconds;
     const createdAtTimeMs = new Date(waitTimesForTerminal[i].createdAt).getTime();
-    const elapsedTimeInHours = elapsedTimeInSeconds / 3600;
     const deltaTimeInHours = (futureTimeMs - createdAtTimeMs) / (1000 * 60 * 60); // time elapsed in hours between now and createdAt time
     x.push(deltaTimeInHours);
-    y.push(elapsedTimeInHours);
-    sumX += deltaTimeInHours;
-    sumY += elapsedTimeInHours;
-    sumXY += deltaTimeInHours * elapsedTimeInHours;
-    sumXX += deltaTimeInHours * deltaTimeInHours;
-    minElapsedTime = Math.min(minElapsedTime, elapsedTimeInHours);
-    maxElapsedTime = Math.max(maxElapsedTime, elapsedTimeInHours);
+    y.push(elapsedTimeInSeconds);
+    minElapsedTime = Math.min(minElapsedTime, elapsedTimeInSeconds);
+    maxElapsedTime = Math.max(maxElapsedTime, elapsedTimeInSeconds);
   }
 
-  const b = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
-  const a = (sumY - b * sumX) / n;
+  if (x.length === 0 || y.length === 0) {
+    return 9999999;
+  }
 
-  let predictedElapsedTime = a + b * ((futureTimeMs - new Date().getTime()) / (1000 * 60 * 60));
-  predictedElapsedTime = Math.min(predictedElapsedTime, maxElapsedTime * 1.1);
-  predictedElapsedTime = Math.max(predictedElapsedTime, minElapsedTime * .9);
+  const avgElapsedTimeInSeconds = totalElapsedTimeInSeconds / n;
 
-  return predictedElapsedTime;
+  // Calculate sine wave parameters
+  const period = Math.PI / 2; // 1/4 period of sine wave
+  const amplitude = (maxElapsedTime - minElapsedTime) / 2; // half the range of observed wait times
+  const phase = Math.asin((avgElapsedTimeInSeconds - minElapsedTime) / amplitude); // phase shift to center the wave on the average wait time
+
+  // Calculate predicted wait time using sine wave
+  const deltaTimeInHours = (futureTimeMs - new Date().getTime()) / (1000 * 60 * 60); // time elapsed in hours between now and future time
+  const predictedElapsedTimeInSeconds = amplitude * Math.sin((2 * Math.PI * deltaTimeInHours / period) + phase) + (minElapsedTime + maxElapsedTime) / 2;
+
+  // Limit predicted values to be within the range of observed values
+  const minPredictedElapsedTime = Math.min(minElapsedTime, maxElapsedTime);
+  const maxPredictedElapsedTime = Math.max(minElapsedTime, maxElapsedTime);
+  const predictedElapsedTime = Math.max(minPredictedElapsedTime, Math.min(predictedElapsedTimeInSeconds, maxPredictedElapsedTime));
+
+  return predictedElapsedTime / 3600; // return in hours
 }
+
+
 
 
 

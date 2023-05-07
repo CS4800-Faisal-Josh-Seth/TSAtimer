@@ -141,7 +141,7 @@ public class TsaBackendAPIController {
                 // Anywhere between 1800 and 10800 seconds
                 Random r = new Random();
                 int low = 1800;
-                int high = 110800;
+                int high = 10800;
 
                 int firstElapsedTime = r.nextInt(high-low) + low;
                 int secondElapsedTime = r.nextInt(high-low) + low;
