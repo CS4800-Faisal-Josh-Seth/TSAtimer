@@ -8,10 +8,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.*;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import java.io.FileReader;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
 @RestController
 public class TsaBackendAPIController {
@@ -64,7 +71,7 @@ public class TsaBackendAPIController {
     }
 
     @PostMapping(
-            value = "/create/waittime",
+            path = "/create/waittime",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<WaitTime> createUser(@RequestBody WaitTime reqWaitTime) {
@@ -73,5 +80,92 @@ public class TsaBackendAPIController {
                 .created(URI
                         .create(String.format("/wait_time/%s", reqWaitTime.getCreatedAt())))
                 .body(persistedPerson);
+    }
+
+    // Auto-generate wait times for a given airport
+    // We will generate 3 data points for each terminal
+    // Created 2 days ago, spaced 12 hours between each other
+    // Ex: JFK
+    @PostMapping(value = {"/autogen/{airport}"})
+    public void autogenWaitTimes(@PathVariable(required=true,name="airport") String airport) {
+
+        JSONParser parser = new JSONParser();
+        try {
+
+            // Parse the airports from the JSON file
+            Object obj = parser.parse(new FileReader("backend/src/main/resources/static/airports.json"));
+            JSONObject jsonObject = (JSONObject) obj;
+
+            // Find the airport in the JSON file that matches the code from the POST req
+            JSONArray airports =  (JSONArray) jsonObject.get("airports");
+            Iterator<JSONObject> iterator = airports.iterator();
+            Long numTerminals = Long.valueOf(0);
+            while (iterator.hasNext()) {
+                JSONObject parsedAirport = (JSONObject) iterator.next();
+                String airportCode = (String)parsedAirport.get("code");
+                if (airportCode.equalsIgnoreCase(airport)) {
+                    numTerminals = (Long)parsedAirport.get("terminals");
+                    break;
+                }
+            }
+
+            // Terminal has the format airportCode-Terminal#
+            // Ex: JFK-1
+            // Generate 3 estimated wait times for each terminal
+            for (int i = 0; i < numTerminals; i++) {
+
+                // Generate AirportCode-Terminal#
+                int terminalNumber = i + 1;
+                String airportCode = airport +  "-" + terminalNumber;
+                System.out.println(airportCode);
+
+                // Generate 3 data points
+                // Requirements:
+                // 1) Generated 2 days ago
+                // 2) Spaced out 6 hours from each other
+                // 3) Wait time ranging from 30 min - 3 hours (converted to seconds)
+
+                // Get the date from 2 days ago
+                SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                f.setTimeZone(TimeZone.getTimeZone("UTC"));
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, -2);
+
+                // Generate 3 createdAt times
+                String firstCreatedAt = f.format(cal.getTime());
+                cal.add(Calendar.HOUR, 6);
+                String secondCreatedAt = f.format(cal.getTime());
+                cal.add(Calendar.HOUR, 6);
+                String thirdCreatedAt = f.format(cal.getTime());
+
+                System.out.println(firstCreatedAt);
+                System.out.println(secondCreatedAt);
+                System.out.println(thirdCreatedAt);
+
+                // Generate 3 elapsed times
+                // Anywhere between 1800 and 10800 seconds
+                Random r = new Random();
+                int low = 1800;
+                int high = 110800;
+
+                int firstElapsedTime = r.nextInt(high-low) + low;
+                int secondElapsedTime = r.nextInt(high-low) + low;
+                int thirdElapsedTime = r.nextInt(high-low) + low;
+
+                System.out.println(firstElapsedTime);
+                System.out.println(secondElapsedTime);
+                System.out.println(thirdElapsedTime);
+
+                // Generate and save 3 wait times for the terminal
+                WaitTime firstWaitTime = new WaitTime((double)firstElapsedTime, firstCreatedAt, airportCode);
+                WaitTime secondWaitTime = new WaitTime((double)secondElapsedTime, secondCreatedAt, airportCode);
+                WaitTime thirdWaitTime = new WaitTime((double)thirdElapsedTime, thirdCreatedAt, airportCode);
+                waitTimeRepository.save(firstWaitTime);
+                waitTimeRepository.save(secondWaitTime);
+                waitTimeRepository.save(thirdWaitTime);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
