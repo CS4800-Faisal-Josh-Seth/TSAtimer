@@ -159,10 +159,6 @@ public class TsaBackendAPIController {
                 WaitTime secondWaitTime = new WaitTime((double)secondElapsedTime, secondCreatedAt, airportCode);
                 WaitTime thirdWaitTime = new WaitTime((double)thirdElapsedTime, thirdCreatedAt, airportCode);
 
-                createUser(firstWaitTime);
-                createUser(secondWaitTime);
-                createUser(thirdWaitTime);
-
                 waitTimes.add(firstWaitTime);
                 waitTimes.add(secondWaitTime);
                 waitTimes.add(thirdWaitTime);
@@ -177,6 +173,7 @@ public class TsaBackendAPIController {
                     .body(waitTimes);
         }
 
+        waitTimeRepository.saveAll(waitTimes);
         return ResponseEntity
                 .created(URI
                         .create(String.format("/wait_time/%s", waitTimes.get(0).getCreatedAt())))
