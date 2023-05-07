@@ -158,9 +158,10 @@ public class TsaBackendAPIController {
                 WaitTime firstWaitTime = new WaitTime((double)firstElapsedTime, firstCreatedAt, airportCode);
                 WaitTime secondWaitTime = new WaitTime((double)secondElapsedTime, secondCreatedAt, airportCode);
                 WaitTime thirdWaitTime = new WaitTime((double)thirdElapsedTime, thirdCreatedAt, airportCode);
-                waitTimeRepository.save(firstWaitTime);
-                waitTimeRepository.save(secondWaitTime);
-                waitTimeRepository.save(thirdWaitTime);
+
+                createUser(firstWaitTime);
+                createUser(secondWaitTime);
+                createUser(thirdWaitTime);
 
                 waitTimes.add(firstWaitTime);
                 waitTimes.add(secondWaitTime);
