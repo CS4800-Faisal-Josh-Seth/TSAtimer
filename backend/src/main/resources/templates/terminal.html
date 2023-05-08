@@ -151,9 +151,7 @@ input {
         startTime = Date.now();
         console.log('Start time:', startTime);
         document.getElementById('elapsedTime').innerHTML = 'Time started';
-        fetch('http://localhost:8080/autogen/JFK', {
-          method: 'POST'
-            })
+
     });
 
     stopButton.addEventListener('click', () => {
@@ -233,7 +231,7 @@ predictButton.addEventListener('click', () => {
     return 69.420;
   }
   if (n === 1) {
-    return 69.420; // return in hours
+    return waitTimesForTerminal[0]/3600; // return in hours
   }
 
   const x = [];

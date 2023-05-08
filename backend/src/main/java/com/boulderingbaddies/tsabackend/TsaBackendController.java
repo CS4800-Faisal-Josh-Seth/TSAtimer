@@ -95,6 +95,14 @@ public class TsaBackendController {
         return "terminal"; // assuming "terminal.html" is the name of your terminal HTML page
     }
 
+    @GetMapping("/DevControls")
+    public String dev(Model model) {
+        //model.addAttribute("meanTime", getMeanTime());
+        //model.addAttribute("mostRecent", getRecentTime());
+        //model.addAttribute("elapsedTime", elapsedTime);
+
+        return "dev";
+    }
 
     @RequestMapping("/seth")
     public String seth() {

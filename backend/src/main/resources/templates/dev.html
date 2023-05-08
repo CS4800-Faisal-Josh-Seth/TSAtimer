@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Airports</title>
+</head>
+<body>
+<h1>Airports</h1>
+<button id="LAX">Dev Controls - LAX</button>
+<button id="JFK">Dev Controls - JFK</button>
+<button id="SFO">Dev Controls - SFO</button>
+<button id="ORD">Dev Controls - ORD</button>
+<button id="ATL">Dev Controls - ATL</button>
+<button id="DFW">Dev Controls - DFW</button>
+<button id="LGA">Dev Controls - LGA</button>
+<button id="LAS">Dev Controls - LAS</button>
+<button id="MIA">Dev Controls - MIA</button>
+
+<script>
+      // Attach a click event handler to each button
+      document.getElementById("LAX").addEventListener("click", function() {
+        fetch("http://localhost:8080/autogen/LAX", { method: "POST" });
+      });
+      document.getElementById("JFK").addEventListener("click", function() {
+        fetch("http://localhost:8080/autogen/JFK", { method: "POST" });
+      });
+      document.getElementById("SFO").addEventListener("click", function() {
+        fetch("http://localhost:8080/autogen/SFO", { method: "POST" });
+      });
+      document.getElementById("ORD").addEventListener("click", function() {
+        fetch("http://localhost:8080/autogen/ORD", { method: "POST" });
+      });
+      document.getElementById("ATL").addEventListener("click", function() {
+        fetch("http://localhost:8080/autogen/ATL", { method: "POST" });
+      });
+      document.getElementById("DFW").addEventListener("click", function() {
+        fetch("http://localhost:8080/autogen/DFW", { method: "POST" });
+      });
+      document.getElementById("LGA").addEventListener("click", function() {
+        fetch("http://localhost:8080/autogen/LGA", { method: "POST" });
+      });
+      document.getElementById("LAS").addEventListener("click", function() {
+        fetch("http://localhost:8080/autogen/LAS", { method: "POST" });
+      });
+      document.getElementById("MIA").addEventListener("click", function() {
+        fetch("http://localhost:8080/autogen/MIA", { method: "POST" });
+      });
+    </script>
+</body>
+</html>
