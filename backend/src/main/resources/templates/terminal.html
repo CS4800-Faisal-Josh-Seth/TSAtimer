@@ -231,7 +231,7 @@ predictButton.addEventListener('click', () => {
     return 1;
   }
   if (n === 1) {
-    return waitTimesForTerminal[0]/3600; // return in hours
+    return waitTimesForTerminal[0].elapsedTime/3600; // return in hours
   }
 
   const x = [];
