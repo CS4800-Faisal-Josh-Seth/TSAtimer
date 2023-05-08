@@ -216,11 +216,16 @@ predictButton.addEventListener('click', () => {
       // Calculate predicted elapsed time in minutes
       const predictedElapsedTime = predictWaitTime(waitTimesForTerminal, futureTimeMs);
 
-      // Display predicted elapsed time in hours and minutes
-      const predictedHours = Math.floor(predictedElapsedTime);
-      const predictedMinutes = Math.round(predictedElapsedTime % 1 * 60);
-      document.getElementById('dataPoints').innerHTML = `Weighted expected elapsed time for ${inputValue} hours from now: ${predictedHours} hours and ${predictedMinutes} minutes`;
-    })
+// If predictedElapsedTime is null, use the first entry in waitTimesForTerminal as the predictedElapsedTime
+if (predictedElapsedTime === null) {
+  predictedElapsedTime = waitTimesForTerminal[0].elapsedTime / 3600;
+}
+
+// Display predicted elapsed time in hours and minutes
+const predictedHours = Math.floor(predictedElapsedTime);
+const predictedMinutes = Math.round(predictedElapsedTime % 1 * 60);
+document.getElementById('dataPoints').innerHTML = `Weighted expected elapsed time for ${inputValue} hours from now: ${predictedHours} hours and ${predictedMinutes} minutes`;
+})
     .catch(error => console.error(error));
 });
 
