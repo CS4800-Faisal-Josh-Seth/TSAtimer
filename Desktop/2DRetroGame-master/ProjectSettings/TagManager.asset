@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Flowers
+  - Spooder
+  - Wall
+  - Danger
+  - Souls
+  - Enemy
+  - bullet
+  - sliders
+  - ambiance
+  - bluePotionEffect
+  - yellowPotionEffect
+  - greenPotionEffect
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - background
+  - Water
+  - UI
+  - onBackgroundWall
+  - EnemyLayer
+  - Ground
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: background
+    uniqueID: 1354952731
+    locked: 0
+  - name: infront background
+    uniqueID: 425938625
+    locked: 0
+  - name: OnBakcgroundWall
+    uniqueID: 2054150121
+    locked: 0
+  - name: bh_defaultBG
+    uniqueID: 2159862799
+    locked: 0
+  - name: bh_deafult
+    uniqueID: 1378010981
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: if_deafult
+    uniqueID: 2425469601
+    locked: 0
+  - name: FRONT
+    uniqueID: 3324678583
+    locked: 0
+  - name: FrontofFront
+    uniqueID: 4055383869
+    locked: 0
+  - name: UI
+    uniqueID: 285811267
+    locked: 0
